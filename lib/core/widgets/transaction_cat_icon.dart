@@ -17,7 +17,7 @@ class TransactionCatIcon extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(size * 0.25),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(size * 0.5),
       ),
       child: Icon(

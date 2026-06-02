@@ -13,17 +13,19 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       // margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
         // borderRadius: BorderRadius.circular(30),
         borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(30), topRight: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -32,16 +34,18 @@ class CustomBottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildNavItem(Icons.home, "Home", 0),
-          _buildNavItem(Icons.bar_chart, "Stats", 1),
-          _buildNavItem(Icons.person, "Profile", 2),
+          _buildNavItem(Icons.home, "Home", 0, context),
+          _buildNavItem(Icons.bar_chart, "Stats", 1, context),
+          _buildNavItem(Icons.person, "Profile", 2, context),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(
+      IconData icon, String label, int index, BuildContext context) {
     final isSelected = currentIndex == index;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () => onTap(index),
@@ -49,7 +53,9 @@ class CustomBottomNavBar extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFEDEAFF) : Colors.transparent,
+          color: isSelected
+              ? (isDarkMode ? const Color(0xFF2C2C2C) : const Color(0xFFEDEAFF))
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -57,7 +63,9 @@ class CustomBottomNavBar extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? const Color(0xFF5F2EEA) : Colors.grey,
+              color: isSelected
+                  ? (isDarkMode ? Colors.white : const Color(0xFF5F2EEA))
+                  : (isDarkMode ? Colors.grey.shade600 : Colors.grey),
             ),
             const SizedBox(height: 4),
             Text(label,
@@ -65,7 +73,9 @@ class CustomBottomNavBar extends StatelessWidget {
                   textStyle: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: isSelected ? const Color(0xFF5F2EEA) : Colors.grey,
+                    color: isSelected
+                        ? (isDarkMode ? Colors.white : const Color(0xFF5F2EEA))
+                        : (isDarkMode ? Colors.grey.shade600 : Colors.grey),
                     letterSpacing: 1,
                   ),
                 )),

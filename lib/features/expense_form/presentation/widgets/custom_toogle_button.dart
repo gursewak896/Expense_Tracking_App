@@ -19,21 +19,33 @@ class CustomToogleButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF4B3EF5) : Colors.grey.shade200,
+        color: isSelected
+            ? const Color(0xFF4B3EF5)
+            : (Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF2C2C2C)
+                : Colors.grey.shade200),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         children: [
           Icon(
             icon,
-            color: isSelected ? Colors.white : Colors.black54,
+            color: isSelected
+                ? Colors.white
+                : (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white60
+                    : Colors.black54),
             size: 18,
           ),
           const SizedBox(width: 4),
           Text(
             label1,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black54,
+              color: isSelected
+                  ? Colors.white
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white60
+                      : Colors.black54),
               fontWeight: FontWeight.w500,
             ),
           ),
