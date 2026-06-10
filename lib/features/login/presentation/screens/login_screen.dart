@@ -1,135 +1,114 @@
 import 'package:expense_app/core/contants.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/home_screen.dart';
+import 'package:expense_app/features/login/bloc/login_cubit.dart';
+import 'package:expense_app/features/login/bloc/login_state.dart';
 import 'package:expense_app/features/login/presentation/screens/forgot_password.dart';
 import 'package:expense_app/features/login/presentation/screens/signup_screen.dart';
 import 'package:expense_app/features/login/widgets/custom_inkwell.dart';
 import 'package:expense_app/features/login/widgets/custom_textfield.dart';
 import 'package:expense_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => LoginCubit(authService: AuthService()),
+      child: const _LoginScreenBody(),
+    );
+  }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final AuthService _authService = AuthService();
-  String errormsg = "";
-  bool error = false, showprogress = false;
-  String username = "", password = "";
-  bool hasAttemptedLogin = false;
-
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  Future<void> startLogin() async {
-    if (showprogress) return;
-
-    setState(() {
-      showprogress = true;
-      error = false;
-    });
-
-    try {
-      // 1. Single call to the service
-      final result = await _authService.login(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-
-      if (!mounted) return; // Safety check for async transitions
-
-      if (result.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result.message),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      } else {
-        // 2. Direct SnackBar call on failure
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result.message),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          showprogress = false;
-        });
-      }
-    }
-  }
-
-  // void _showErrorSnackBar(String message) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(message),
-  //       backgroundColor: Colors.redAccent,
-  //       behavior: SnackBarBehavior.floating,
-  //       margin: const EdgeInsets.all(15),
-  //     ),
-  //   );
-  // }
-
-  final _loginKey = GlobalKey<FormState>();
+class _LoginScreenBody extends StatefulWidget {
+  const _LoginScreenBody();
 
   @override
-  void initState() {
-    username = "";
-    password = "";
-    errormsg = "";
-    error = false;
-    showprogress = false;
-    super.initState();
+  State<_LoginScreenBody> createState() => _LoginScreenBodyState();
+}
+
+class _LoginScreenBodyState extends State<_LoginScreenBody> {
+  final GlobalKey<FormState> _loginKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void _startLogin() {
+    if (_loginKey.currentState?.validate() ?? false) {
+      context.read<LoginCubit>().login(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: appbar(context),
-      resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 62),
-              _header(context),
-              const SizedBox(height: 32),
-              _inputField(context),
-              _forgotPassword(context),
-              const SizedBox(height: 16),
-              _signup(context),
-            ],
-          ),
-        ),
+    return BlocListener<LoginCubit, LoginState>(
+      listener: (context, state) {
+        if (state is LoginSuccess) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login successful'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+
+        if (state is LoginFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid email or password'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<LoginCubit, LoginState>(
+        builder: (context, state) {
+          final bool isLoading = state is LoginLoading;
+
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            body: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 62),
+                    _header(context),
+                    const SizedBox(height: 32),
+                    _inputField(context, isLoading),
+                    _forgotPassword(context),
+                    const SizedBox(height: 16),
+                    _signup(context),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  _header(context) {
+  _header(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -158,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  _inputField(context) {
+  _inputField(BuildContext context, bool isLoading) {
     return Form(
       key: _loginKey,
       child: Column(
@@ -176,7 +155,6 @@ class _LoginScreenState extends State<LoginScreen> {
               if (value == null || value.isEmpty) {
                 return 'Please enter your email';
               }
-              // This Regex checks for standard email patterns (name@domain.com)
               bool emailValid = RegExp(
                       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                   .hasMatch(value);
@@ -200,8 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your Password';
-              } else if (passwordController.text != value) {
-                return "Password Incorrect";
               }
               return null;
             },
@@ -209,13 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 38),
           ElevatedButton(
-            onPressed: showprogress
-                ? null
-                : () {
-                    if (_loginKey.currentState!.validate()) {
-                      startLogin();
-                    }
-                  },
+            onPressed: isLoading ? null : _startLogin,
             style: ElevatedButton.styleFrom(
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(16)),
@@ -226,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
               disabledBackgroundColor: primaryColor,
               disabledForegroundColor: Colors.white,
             ),
-            child: showprogress
+            child: isLoading
                 ? const SizedBox(
                     height: 20,
                     width: 20,
@@ -248,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  _forgotPassword(context) {
+  _forgotPassword(BuildContext context) {
     return Center(
       child: CustomInkwell(
           text: "Forgot password?",
@@ -259,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  _signup(context) {
+  _signup(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -279,22 +249,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget errmsg(String text) {
-    //error message widget.
     return Container(
       padding: const EdgeInsets.all(15.00),
       margin: const EdgeInsets.only(bottom: 10.00),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: Colors.red,
-          border: Border.all(color: Colors.red, width: 2)),
+        borderRadius: BorderRadius.circular(30),
+        color: Colors.red,
+        border: Border.all(color: Colors.red, width: 2),
+      ),
       child: Row(children: <Widget>[
         Container(
           margin: const EdgeInsets.only(right: 6.00),
           child: const Icon(Icons.info, color: Colors.white),
-        ), // icon for error message
-
+        ),
         Text(text, style: const TextStyle(color: Colors.white, fontSize: 18)),
-        //show error message text
       ]),
     );
   }
