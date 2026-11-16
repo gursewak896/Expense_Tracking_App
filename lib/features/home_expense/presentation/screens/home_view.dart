@@ -1,4 +1,5 @@
 import 'package:expense_app/core/providers/transaction_provider.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/core/widgets/transaction_item_card.dart';
 import 'package:expense_app/features/expense_form/presentation/screens/expense_form_screen.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/all_transaction_screen.dart';
@@ -20,35 +21,12 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   static const int _recentTransactionLimit = 5;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      final provider = context.read<TransactionProvider>();
-      _loadTransactions(provider);
-    });
-  }
-
-  Future<void> _loadTransactions(TransactionProvider provider) async {
-    await provider.loadLocalTransactions();
-    if (provider.transactions.isEmpty) {
-      await provider.fetchTransactions();
-    }
-  }
-
-  // Navigate to add expense screen and refresh on return
+  // Navigate to add expense screen.
   Future<void> _navigateToAddExpense() async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const ExpenseFormScreen()),
     );
-    // Refresh transactions after adding
-    if (mounted) {
-      Provider.of<TransactionProvider>(context, listen: false)
-          .fetchTransactions();
-    }
   }
 
   @override
@@ -104,7 +82,7 @@ class _HomeViewState extends State<HomeView> {
                               color: Theme.of(context).brightness ==
                                       Brightness.dark
                                   ? Colors.white
-                                  : const Color(0xFF3A2EDB),
+                                  : AppColors.primary,
                             ),
                           ),
                         ),

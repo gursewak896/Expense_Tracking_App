@@ -112,6 +112,44 @@ void main() {
       expect(result.categories.single.color, const Color(0xFF9E9E9E));
     });
 
+    test('uses local calendar dates when stored timestamps are UTC', () {
+      final localMonday = DateTime(2025, 3, 10, 0, 30);
+      final result = TransactionStatistics.calculate(
+        transactions: [
+          _transaction(
+            id: 'monday-utc',
+            date: localMonday.toUtc(),
+            amount: 25,
+            isIncome: false,
+          ),
+        ],
+        period: StatsPeriod.week,
+        referenceDate: DateTime(2025, 3, 13),
+      );
+
+      expect(result.totalExpenses, 25);
+      expect(result.buckets.first.amount, 25);
+    });
+
+    test('places UTC timestamps in the local month bucket', () {
+      final localMonthStart = DateTime(2025, 3, 1, 0, 30);
+      final result = TransactionStatistics.calculate(
+        transactions: [
+          _transaction(
+            id: 'month-start-utc',
+            date: localMonthStart.toUtc(),
+            amount: 40,
+            isIncome: false,
+          ),
+        ],
+        period: StatsPeriod.month,
+        referenceDate: DateTime(2025, 3, 15),
+      );
+
+      expect(result.totalExpenses, 40);
+      expect(result.buckets.first.amount, 40);
+    });
+
     test('returns zero average and empty categories when range has no expenses',
         () {
       final result = TransactionStatistics.calculate(

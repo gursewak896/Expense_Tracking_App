@@ -1,8 +1,12 @@
+import 'dart:async';
+
+import 'package:expense_app/core/providers/transaction_provider.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/home_view.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/profile_view.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/stats_view.dart';
 import 'package:expense_app/features/home_expense/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  late final TransactionProvider _transactionProvider;
 
   final List<Widget> _pages = [
     const HomeView(), // index 0
@@ -23,10 +28,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _transactionProvider = context.read<TransactionProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        unawaited(_transactionProvider.initializeTransactions());
+      }
+    });
   }
 
   @override
   void dispose() {
+    unawaited(_transactionProvider.stopListeningToTransactions());
     super.dispose();
   }
 

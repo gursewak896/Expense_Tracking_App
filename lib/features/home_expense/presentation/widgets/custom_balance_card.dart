@@ -1,4 +1,5 @@
 import 'package:expense_app/core/providers/transaction_provider.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +16,8 @@ class BalanceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(
           colors: [
-            Color(0xFF5B4BFF), // lighter purple-blue
-            Color(0xFF3A2EDB), // darker purple-blue
+            AppColors.primary,
+            AppColors.primaryDark,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

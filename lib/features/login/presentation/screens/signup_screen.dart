@@ -1,4 +1,5 @@
 import 'package:expense_app/core/contants.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/features/login/widgets/custom_inkwell.dart';
 import 'package:expense_app/features/login/widgets/custom_textfield.dart';
 import 'package:expense_app/services/auth_service.dart';
@@ -125,7 +126,7 @@ class _SignupPageState extends State<SignupPage> {
     } else if (passwordStrength < 0.7) {
       return Colors.orange;
     } else {
-      return const Color(0xFF4B3EF5);
+      return AppColors.primary;
     }
   }
 

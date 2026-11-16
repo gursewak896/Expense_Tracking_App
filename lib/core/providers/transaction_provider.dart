@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,13 +13,14 @@ class TransactionProvider extends ChangeNotifier {
 
   final TransactionApiService _apiService = TransactionApiService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  StreamSubscription<List<TransactionModel>>? _transactionsSubscription;
+  String? _activeUserId;
 
-  String get _localStorageKey {
-    final uid = _auth.currentUser?.uid;
-    if (uid == null || uid.isEmpty) {
+  String _localStorageKeyFor(String? userId) {
+    if (userId == null || userId.isEmpty) {
       return _storageKey;
     }
-    return '${_storageKey}_$uid';
+    return '${_storageKey}_$userId';
   }
 
   List<TransactionModel> _transactions = [];
@@ -29,13 +31,17 @@ class TransactionProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> _saveTransactionsToLocal() async {
+  Future<void> _saveTransactionsToLocal(
+    String userId,
+    List<TransactionModel> transactions,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonString = jsonEncode(_transactions.map((t) => t.toMap()).toList());
-    await prefs.setString(_localStorageKey, jsonString);
+    final jsonString = jsonEncode(transactions.map((t) => t.toMap()).toList());
+    await prefs.setString(_localStorageKeyFor(userId), jsonString);
   }
 
   Future<void> loadLocalTransactions() async {
+    final userId = _auth.currentUser?.uid;
     _isLoading = true;
     _error = null;
     _transactions = [];
@@ -43,7 +49,7 @@ class TransactionProvider extends ChangeNotifier {
 
     try {
       final prefs = await SharedPreferences.getInstance();
-      final stored = prefs.getString(_localStorageKey);
+      final stored = prefs.getString(_localStorageKeyFor(userId));
       if (stored != null && stored.isNotEmpty) {
         final decoded = jsonDecode(stored) as List<dynamic>;
         _transactions = decoded
@@ -59,10 +65,101 @@ class TransactionProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> clearLocalTransactions() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_localStorageKey);
+  Future<void> initializeTransactions() async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null || userId.isEmpty) {
+      await stopListeningToTransactions();
+      _transactions = [];
+      _isLoading = false;
+      _error = null;
+      notifyListeners();
+      return;
+    }
+
+    if (_activeUserId == userId && _transactionsSubscription != null) return;
+
+    await stopListeningToTransactions();
+    if (_auth.currentUser?.uid != userId) return;
+
+    _activeUserId = userId;
     _transactions = [];
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stored = prefs.getString(_localStorageKeyFor(userId));
+      if (_activeUserId != userId) return;
+      if (stored != null && stored.isNotEmpty) {
+        final decoded = jsonDecode(stored) as List<dynamic>;
+        _transactions = decoded
+            .map((item) => TransactionModel.fromJson(
+                Map<String, dynamic>.from(item as Map<String, dynamic>)))
+            .toList();
+      }
+      _isLoading = _transactions.isEmpty;
+      notifyListeners();
+    } catch (e) {
+      if (_activeUserId != userId) return;
+      _error = 'Failed to load cached transactions: $e';
+      _isLoading = true;
+      notifyListeners();
+    }
+
+    if (_activeUserId != userId) return;
+    try {
+      _transactionsSubscription = getTransactionsStream().listen(
+        (transactions) {
+          if (_activeUserId != userId) return;
+          _transactions = transactions;
+          _isLoading = false;
+          _error = null;
+          notifyListeners();
+          unawaited(_cacheStreamTransactions(userId, transactions));
+        },
+        onError: (Object error) {
+          if (_activeUserId != userId) return;
+          _isLoading = false;
+          _error = error.toString();
+          notifyListeners();
+        },
+      );
+    } catch (e) {
+      if (_activeUserId != userId) return;
+      _isLoading = false;
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _cacheStreamTransactions(
+    String userId,
+    List<TransactionModel> transactions,
+  ) async {
+    try {
+      await _saveTransactionsToLocal(userId, transactions);
+    } catch (e) {
+      if (_activeUserId != userId) return;
+      _error = 'Failed to cache transactions: $e';
+      notifyListeners();
+    }
+  }
+
+  Future<void> stopListeningToTransactions() async {
+    _activeUserId = null;
+    final subscription = _transactionsSubscription;
+    _transactionsSubscription = null;
+    await subscription?.cancel();
+  }
+
+  Future<void> clearLocalTransactions() async {
+    await stopListeningToTransactions();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_localStorageKeyFor(_auth.currentUser?.uid));
+    _transactions = [];
+    _isLoading = false;
+    _error = null;
     notifyListeners();
   }
 
@@ -75,8 +172,12 @@ class TransactionProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final userId = _auth.currentUser?.uid;
+      if (userId == null || userId.isEmpty) {
+        throw StateError('A signed-in user is required to fetch transactions.');
+      }
       _transactions = await _apiService.getTransactions();
-      await _saveTransactionsToLocal();
+      await _saveTransactionsToLocal(userId, _transactions);
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -89,17 +190,33 @@ class TransactionProvider extends ChangeNotifier {
   // =======================================
   // ✅ POST - Add new transaction
   // =======================================
-  Future<void> addTransaction(TransactionModel transaction) async {
+  Future<bool> addTransaction(TransactionModel transaction) async {
+    late final String userId;
+    late final TransactionModel newTransaction;
     try {
-      final newTransaction = await _apiService.addTransaction(transaction);
-      _transactions.insert(0, newTransaction);
-      await _saveTransactionsToLocal();
-      _error = null;
-      notifyListeners();
+      final currentUserId = _auth.currentUser?.uid;
+      if (currentUserId == null || currentUserId.isEmpty) {
+        throw StateError('A signed-in user is required to add transactions.');
+      }
+      userId = currentUserId;
+      newTransaction = await _apiService.addTransaction(transaction);
     } catch (e) {
       _error = e.toString();
       notifyListeners();
+      return false;
     }
+
+    _upsertTransaction(newTransaction);
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _saveTransactionsToLocal(userId, _transactions);
+    } catch (e) {
+      _error = 'Expense saved to Firestore, but local cache update failed: $e';
+      notifyListeners();
+    }
+    return true;
   }
 
   // =======================================
@@ -107,12 +224,14 @@ class TransactionProvider extends ChangeNotifier {
   // =======================================
   Future<void> updateTransaction(TransactionModel transaction) async {
     try {
-      await _apiService.updateTransaction(transaction);
-      final index = _transactions.indexWhere((t) => t.id == transaction.id);
-      if (index != -1) {
-        _transactions[index] = transaction;
-        await _saveTransactionsToLocal();
+      final userId = _auth.currentUser?.uid;
+      if (userId == null || userId.isEmpty) {
+        throw StateError(
+            'A signed-in user is required to update transactions.');
       }
+      await _apiService.updateTransaction(transaction);
+      _upsertTransaction(transaction);
+      await _saveTransactionsToLocal(userId, _transactions);
       _error = null;
       notifyListeners();
     } catch (e) {
@@ -126,9 +245,14 @@ class TransactionProvider extends ChangeNotifier {
   // =======================================
   Future<void> deleteTransaction(String transactionId) async {
     try {
+      final userId = _auth.currentUser?.uid;
+      if (userId == null || userId.isEmpty) {
+        throw StateError(
+            'A signed-in user is required to delete transactions.');
+      }
       await _apiService.deleteTransaction(transactionId);
       _transactions.removeWhere((t) => t.id == transactionId);
-      await _saveTransactionsToLocal();
+      await _saveTransactionsToLocal(userId, _transactions);
       _error = null;
       notifyListeners();
     } catch (e) {
@@ -142,6 +266,16 @@ class TransactionProvider extends ChangeNotifier {
   // =======================================
   Stream<List<TransactionModel>> getTransactionsStream() {
     return _apiService.getTransactionsStream();
+  }
+
+  void _upsertTransaction(TransactionModel transaction) {
+    final index = _transactions.indexWhere((item) => item.id == transaction.id);
+    if (index == -1) {
+      _transactions.add(transaction);
+    } else {
+      _transactions[index] = transaction;
+    }
+    _transactions.sort((a, b) => b.date.compareTo(a.date));
   }
 
   // =======================================
@@ -161,5 +295,11 @@ class TransactionProvider extends ChangeNotifier {
 
   double getBalance() {
     return getTotalIncome() - getTotalExpense();
+  }
+
+  @override
+  void dispose() {
+    unawaited(_transactionsSubscription?.cancel());
+    super.dispose();
   }
 }

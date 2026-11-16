@@ -1,5 +1,6 @@
 import 'package:expense_app/core/providers/transaction_provider.dart';
 import 'package:expense_app/core/providers/theme_provider.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/change_pw_screen.dart';
 import 'package:expense_app/features/home_expense/presentation/widgets/custom_list_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -105,7 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
                       child: Icon(
                         Icons.person,
                         size: 50,
-                        color: Color(0xFF3A2EDB),
+                        color: AppColors.primary,
                       ),
                     ),
                   ),
@@ -151,7 +152,7 @@ class _ProfileViewState extends State<ProfileView> {
                   Text(
                     "ACTIVE USER",
                     style: TextStyle(
-                      color: Color(0xFF3A2EDB),
+                      color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -390,7 +391,7 @@ class _ProfileViewState extends State<ProfileView> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF3A2EDB).withValues(alpha: 0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -408,7 +409,7 @@ class _ProfileViewState extends State<ProfileView> {
   // ================= TILE =================
   Widget _buildTile(IconData icon, String title, {VoidCallback? onTap}) {
     return ListTile(
-      leading: Icon(icon, color: const Color(0xFF3A2EDB)),
+      leading: Icon(icon, color: AppColors.primary),
       title: Text(title),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap ?? () {},

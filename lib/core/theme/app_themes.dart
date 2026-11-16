@@ -1,3 +1,4 @@
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppThemes {
@@ -6,9 +7,9 @@ class AppThemes {
     brightness: Brightness.light,
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF4B3EF5),
+      seedColor: AppColors.primary,
       brightness: Brightness.light,
-    ),
+    ).copyWith(primary: AppColors.primary, onPrimary: Colors.white),
     scaffoldBackgroundColor: const Color(0xFFF5F5FA),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
@@ -46,14 +47,14 @@ class AppThemes {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(
-          color: Color(0xFF4B3EF5),
+          color: AppColors.primary,
           width: 1.5,
         ),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF4B3EF5),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         textStyle: const TextStyle(fontWeight: FontWeight.w600),
       ),
@@ -65,9 +66,9 @@ class AppThemes {
     brightness: Brightness.dark,
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
-      seedColor: const Color(0xFF4B3EF5),
+      seedColor: AppColors.primary,
       brightness: Brightness.dark,
-    ),
+    ).copyWith(primary: AppColors.primary, onPrimary: Colors.white),
     scaffoldBackgroundColor: const Color(0xFF121212),
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1E1E1E),
@@ -105,14 +106,14 @@ class AppThemes {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide: const BorderSide(
-          color: Color(0xFF4B3EF5),
+          color: AppColors.primary,
           width: 1.5,
         ),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF4B3EF5),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         textStyle: const TextStyle(fontWeight: FontWeight.w600),
       ),

@@ -1,3 +1,4 @@
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -64,7 +65,7 @@ class CustomBottomNavBar extends StatelessWidget {
             Icon(
               icon,
               color: isSelected
-                  ? (isDarkMode ? Colors.white : const Color(0xFF5F2EEA))
+                  ? (isDarkMode ? Colors.white : AppColors.primary)
                   : (isDarkMode ? Colors.grey.shade600 : Colors.grey),
             ),
             const SizedBox(height: 4),
@@ -74,7 +75,7 @@ class CustomBottomNavBar extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: isSelected
-                        ? (isDarkMode ? Colors.white : const Color(0xFF5F2EEA))
+                        ? (isDarkMode ? Colors.white : AppColors.primary)
                         : (isDarkMode ? Colors.grey.shade600 : Colors.grey),
                     letterSpacing: 1,
                   ),

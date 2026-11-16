@@ -1,6 +1,7 @@
 import 'package:expense_app/features/expense_form/presentation/provider/expense_form_provider.dart';
 import 'package:expense_app/features/expense_form/presentation/widgets/category_card.dart';
 import 'package:expense_app/features/expense_form/presentation/widgets/custom_toogle_button.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/features/home_expense/data/models/category_items.dart';
 import 'package:expense_app/features/home_expense/data/models/transaction_model.dart';
 import 'package:flutter/material.dart';
@@ -180,7 +181,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                                       RegExp(r'^\d*\.?\d*')),
                                   LengthLimitingTextInputFormatter(10),
                                 ],
-                                cursorColor: const Color(0xFF4B3EF5),
+                                cursorColor: AppColors.primary,
                                 cursorWidth: 1.5,
                                 cursorRadius: const Radius.circular(2),
                                 style: TextStyle(
@@ -219,7 +220,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                               child: Text(
                                 'NPR',
                                 style: GoogleFonts.poppins(
-                                  color: const Color(0xFF4B3EF5),
+                                  color: AppColors.primary,
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -463,7 +464,7 @@ class _ExpenseFormScreenState extends State<ExpenseFormScreen> {
                           }
                         }, // ✅ Use the save function
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4B3EF5),
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),

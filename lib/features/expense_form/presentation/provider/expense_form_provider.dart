@@ -1,4 +1,5 @@
 import 'package:expense_app/core/providers/transaction_provider.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/features/home_expense/data/models/category_items.dart';
 import 'package:expense_app/features/home_expense/data/models/transaction_model.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class ExpenseFormProvider extends ChangeNotifier {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF4B3EF5),
+              primary: AppColors.primary,
             ),
           ),
           child: child!,
@@ -102,12 +103,18 @@ class ExpenseFormProvider extends ChangeNotifier {
       category: isIncome ? null : selectedCategoryItem,
     );
 
-    // Add to Firestore via TransactionProvider
-    await Provider.of<TransactionProvider>(context, listen: false)
+    final saved = await Provider.of<TransactionProvider>(context, listen: false)
         .addTransaction(transaction);
 
     if (context.mounted) {
-      Navigator.pop(context);
+      if (saved) {
+        Navigator.pop(context);
+      } else {
+        final error =
+            Provider.of<TransactionProvider>(context, listen: false).error;
+        _showError(context,
+            'Could not save expense${error == null ? '' : ': $error'}');
+      }
     }
   }
 

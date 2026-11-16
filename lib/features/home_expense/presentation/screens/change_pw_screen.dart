@@ -1,4 +1,5 @@
 import 'package:expense_app/services/auth_service.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -55,7 +56,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     } else if (passwordStrength < 0.7) {
       return Colors.orange;
     } else {
-      return const Color(0xFF4B3EF5);
+      return AppColors.primary;
     }
   }
 
@@ -200,12 +201,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       width: 74,
                       height: 74,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF4B3EF5).withValues(alpha: 0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
                         Icons.lock_reset_rounded,
-                        color: Color(0xFF4B3EF5),
+                        color: AppColors.primary,
                         size: 40,
                       ),
                     ),
@@ -342,7 +343,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   child: ElevatedButton.icon(
                     onPressed: isChangingPassword ? null : changePassword,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4B3EF5),
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -379,7 +380,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         ? "Sending reset email..."
                         : "Reset password via email",
                     style: const TextStyle(
-                      color: Color(0xFF4B3EF5),
+                      color: AppColors.primary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -469,7 +470,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
-            color: Color(0xFF4B3EF5),
+            color: AppColors.primary,
             width: 1.5,
           ),
         ),

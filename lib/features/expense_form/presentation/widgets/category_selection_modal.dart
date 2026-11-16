@@ -1,4 +1,5 @@
 import 'package:expense_app/core/contants.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/core/widgets/transaction_cat_icon.dart';
 import 'package:expense_app/features/home_expense/data/models/category_items.dart';
 import 'package:flutter/material.dart';
@@ -93,13 +94,12 @@ class CategorySelectionModal extends StatelessWidget {
                               ? BoxDecoration(
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: const Color(0xFF4B3EF5),
+                                    color: AppColors.primary,
                                     width: 2,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color:
-                                          const Color(0xFF4B3EF5).withAlpha(30),
+                                      color: AppColors.primary.withAlpha(30),
                                       blurRadius: 8,
                                       spreadRadius: 2,
                                     ),

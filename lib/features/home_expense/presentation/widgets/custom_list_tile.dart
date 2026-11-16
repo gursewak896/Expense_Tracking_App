@@ -1,3 +1,4 @@
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomListTile extends StatelessWidget {
@@ -21,13 +22,13 @@ class CustomListTile extends StatelessWidget {
       // Only icon is tappable
       leading: Icon(
         icon,
-        color: const Color(0xFF3A2EDB),
+        color: AppColors.primary,
       ),
       trailing: Switch(
         splashRadius: 4,
         value: value,
         onChanged: onChanged,
-        activeThumbColor: const Color(0xFF3A2EDB),
+        activeThumbColor: AppColors.primary,
       ),
     );
   }

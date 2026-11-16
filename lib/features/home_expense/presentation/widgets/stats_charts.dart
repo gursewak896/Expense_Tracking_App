@@ -73,7 +73,8 @@ class _ExpenseBarChartPainter extends CustomPainter {
 
     for (var line = 0; line <= 4; line++) {
       final y = top + chartHeight * line / 4;
-      canvas.drawLine(Offset(left, y), Offset(size.width - right, y), gridPaint);
+      canvas.drawLine(
+          Offset(left, y), Offset(size.width - right, y), gridPaint);
       final amountAtLine = scaleMax * (4 - line) / 4;
       _drawText(
         canvas,

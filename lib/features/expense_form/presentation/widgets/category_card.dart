@@ -1,4 +1,5 @@
 import 'package:expense_app/core/contants.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/core/widgets/transaction_cat_icon.dart';
 import 'package:expense_app/features/expense_form/presentation/widgets/category_selection_modal.dart';
 import 'package:expense_app/features/home_expense/data/models/category_items.dart';
@@ -108,7 +109,7 @@ class _CategoryCardState extends State<CategoryCard> {
                 child: Text(
                   'View All',
                   style: GoogleFonts.poppins(
-                    color: const Color(0xFF4B3EF5),
+                    color: AppColors.primary,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -172,7 +173,7 @@ class _CategoryCardState extends State<CategoryCard> {
                             ? BoxDecoration(
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: const Color(0xFF4B3EF5),
+                                  color: AppColors.primary,
                                   width: 1.5,
                                 ),
                               )

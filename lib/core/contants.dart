@@ -1,5 +1,6 @@
 // constants.dart
 import 'package:expense_app/features/home_expense/data/models/category_items.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,7 +19,7 @@ Text textFieldHeader(String text) {
       style: GoogleFonts.poppins(fontSize: 12, color: Colors.black));
 }
 
-Color primaryColor = const Color(0xFF3A2EDB);
+const Color primaryColor = AppColors.primary;
 
 // Main categories shown in horizontal list (first 4 + More button)
 final List<CategoryItem> mainCategoryItems = [
@@ -30,7 +31,7 @@ final List<CategoryItem> mainCategoryItems = [
   CategoryItem(
     label: 'Shopping',
     icon: Icons.shopping_bag_outlined,
-    color: const Color(0xFF4B3EF5),
+    color: AppColors.primary,
   ),
   CategoryItem(
     label: 'Transport',

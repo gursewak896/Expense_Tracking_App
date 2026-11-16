@@ -1,4 +1,5 @@
 import 'package:expense_app/core/providers/transaction_provider.dart';
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/core/utils/currency_formatter.dart';
 import 'package:expense_app/features/home_expense/presentation/statistics/transaction_statistics.dart';
 import 'package:expense_app/features/home_expense/presentation/widgets/stats_charts.dart';
@@ -190,13 +191,15 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [primary, const Color(0xFF3A2EDB)],
+        gradient: const LinearGradient(
+          colors: [
+            AppColors.primary,
+            AppColors.primaryDark,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -321,8 +324,7 @@ class _CategoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final percentage =
-        total == 0 ? 0 : (category.amount / total * 100).round();
+    final percentage = total == 0 ? 0 : (category.amount / total * 100).round();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(

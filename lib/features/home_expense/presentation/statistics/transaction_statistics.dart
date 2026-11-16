@@ -21,10 +21,11 @@ class StatsDateRange {
 
     switch (period) {
       case StatsPeriod.week:
-        final start = date.subtract(Duration(days: date.weekday - 1));
+        final start =
+            DateTime(date.year, date.month, date.day - date.weekday + 1);
         return StatsDateRange(
           start: start,
-          endExclusive: start.add(const Duration(days: 7)),
+          endExclusive: DateTime(start.year, start.month, start.day + 7),
         );
       case StatsPeriod.month:
         final start = DateTime(date.year, date.month);
@@ -99,16 +100,17 @@ class TransactionStatistics {
     var expenseCount = 0;
 
     for (final transaction in transactions) {
+      final localDate = transaction.date.toLocal();
       if (transaction.isIncome ||
-          transaction.date.isBefore(range.start) ||
-          !transaction.date.isBefore(range.endExclusive)) {
+          localDate.isBefore(range.start) ||
+          !localDate.isBefore(range.endExclusive)) {
         continue;
       }
 
       totalExpenses += transaction.amount;
       expenseCount++;
 
-      final bucketIndex = _bucketIndex(period, transaction.date, range.start);
+      final bucketIndex = _bucketIndex(period, localDate, range.start);
       bucketAmounts[bucketIndex] += transaction.amount;
 
       final category = transaction.category;
@@ -194,9 +196,9 @@ List<ExpenseBucket> _createBuckets(StatsPeriod period) {
 int _bucketIndex(StatsPeriod period, DateTime date, DateTime rangeStart) {
   switch (period) {
     case StatsPeriod.week:
-      final dateOnly = DateTime(date.year, date.month, date.day);
+      final dateOnly = DateTime.utc(date.year, date.month, date.day);
       final startOnly =
-          DateTime(rangeStart.year, rangeStart.month, rangeStart.day);
+          DateTime.utc(rangeStart.year, rangeStart.month, rangeStart.day);
       return dateOnly.difference(startOnly).inDays;
     case StatsPeriod.month:
       return (date.day - 1) ~/ 7;

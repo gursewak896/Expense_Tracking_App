@@ -1,3 +1,4 @@
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:expense_app/core/providers/theme_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: Icon(
                       Icons.person,
                       size: 32,
-                      color: Color(0xFF3A2EDB),
+                      color: AppColors.primary,
                     ),
                   ),
                 ),

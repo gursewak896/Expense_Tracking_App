@@ -1,3 +1,4 @@
+import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomToogleButton extends StatelessWidget {
@@ -20,7 +21,7 @@ class CustomToogleButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 24),
       decoration: BoxDecoration(
         color: isSelected
-            ? const Color(0xFF4B3EF5)
+            ? AppColors.primary
             : (Theme.of(context).brightness == Brightness.dark
                 ? const Color(0xFF2C2C2C)
                 : Colors.grey.shade200),
