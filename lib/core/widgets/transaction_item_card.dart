@@ -8,10 +8,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TransactionItem extends StatelessWidget {
+  static final DateFormat _dateFormatter = DateFormat('dd MMM yyyy');
+
   final TransactionModel transaction;
 
   String formatDate(DateTime date) {
-    return DateFormat('dd MMM yyyy').format(date);
+    return _dateFormatter.format(date);
   }
 
   const TransactionItem({super.key, required this.transaction});
@@ -42,11 +44,11 @@ class TransactionItem extends StatelessWidget {
   }
 
   void _deleteTransaction(BuildContext context) async {
+    final provider = context.read<TransactionProvider>();
     final confirmed = await _showDeleteConfirmation(context);
     if (confirmed != true) return;
 
-    await Provider.of<TransactionProvider>(context, listen: false)
-        .deleteTransaction(transaction.id);
+    await provider.deleteTransaction(transaction.id);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Transaction deleted')),

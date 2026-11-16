@@ -2,7 +2,6 @@ import 'package:expense_app/core/providers/transaction_provider.dart';
 import 'package:expense_app/core/providers/theme_provider.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/change_pw_screen.dart';
 import 'package:expense_app/features/home_expense/presentation/widgets/custom_list_tile.dart';
-import 'package:expense_app/features/login/presentation/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -288,24 +287,18 @@ class _ProfileViewState extends State<ProfileView> {
                             ),
                             TextButton(
                               onPressed: () async {
+                                final navigator = Navigator.of(context);
                                 final themeProvider =
-                                    Provider.of<ThemeProvider>(context,
-                                        listen: false);
-                                await themeProvider.setDarkMode(false);
-
+                                    context.read<ThemeProvider>();
                                 final transactionProvider =
-                                    Provider.of<TransactionProvider>(context,
-                                        listen: false);
+                                    context.read<TransactionProvider>();
+
+                                await themeProvider.setDarkMode(false);
                                 await transactionProvider
                                     .clearLocalTransactions();
 
                                 await FirebaseAuth.instance.signOut();
-                                Navigator.pop(dialogContext);
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const LoginScreen()),
-                                );
+                                navigator.pop();
                               },
                               child: const Text(
                                 'Log Out',
@@ -319,10 +312,6 @@ class _ProfileViewState extends State<ProfileView> {
                         );
                       },
                     );
-                    // Navigator.of(context).pushReplacement(
-                    //   MaterialPageRoute(
-                    //       builder: (context) => const LoginScreen()),
-                    // );
                   },
                   icon: const Icon(Icons.logout),
                   label: const Text("Log Out"),

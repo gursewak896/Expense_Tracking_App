@@ -1,5 +1,4 @@
 import 'package:expense_app/core/contants.dart';
-import 'package:expense_app/features/login/presentation/screens/login_screen.dart';
 import 'package:expense_app/features/login/widgets/custom_inkwell.dart';
 import 'package:expense_app/features/login/widgets/custom_textfield.dart';
 import 'package:expense_app/services/auth_service.dart';
@@ -178,8 +177,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         CustomInkwell(
             text: "Login Here",
             onTap: () {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()));
+              Navigator.of(context).pop();
             }),
       ],
     );

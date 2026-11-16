@@ -1,5 +1,4 @@
 import 'package:expense_app/core/contants.dart';
-import 'package:expense_app/features/home_expense/presentation/screens/home_screen.dart';
 import 'package:expense_app/features/login/bloc/login_cubit.dart';
 import 'package:expense_app/features/login/bloc/login_state.dart';
 import 'package:expense_app/features/login/presentation/screens/forgot_password.dart';
@@ -62,9 +61,6 @@ class _LoginScreenBodyState extends State<_LoginScreenBody> {
               content: Text('Login successful'),
               backgroundColor: Colors.green,
             ),
-          );
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         }
 
@@ -241,7 +237,7 @@ class _LoginScreenBodyState extends State<_LoginScreenBody> {
         CustomInkwell(
             text: "Sign Up",
             onTap: () {
-              Navigator.of(context).pushReplacement(
+              Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const SignupPage()));
             }),
       ],

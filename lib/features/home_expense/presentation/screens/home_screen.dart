@@ -1,5 +1,6 @@
 import 'package:expense_app/features/home_expense/presentation/screens/home_view.dart';
 import 'package:expense_app/features/home_expense/presentation/screens/profile_view.dart';
+import 'package:expense_app/features/home_expense/presentation/screens/stats_view.dart';
 import 'package:expense_app/features/home_expense/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const HomeView(), // index 0
-    const Center(child: Text("Stats Page")), // index 1
+    const StatsView(), // index 1
     const ProfileView(),
   ];
 

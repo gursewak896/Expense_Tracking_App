@@ -1,8 +1,8 @@
 import 'package:expense_app/core/contants.dart';
-import 'package:expense_app/features/login/presentation/screens/login_screen.dart';
 import 'package:expense_app/features/login/widgets/custom_inkwell.dart';
 import 'package:expense_app/features/login/widgets/custom_textfield.dart';
 import 'package:expense_app/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -70,12 +70,12 @@ class _SignupPageState extends State<SignupPage> {
           passwordStrength = 0;
         });
 
+        await FirebaseAuth.instance.signOut();
+
         // Step 5. Wait briefly so snackbar is visible, then navigate back to login
         await Future.delayed(const Duration(milliseconds: 800));
         if (!mounted) return;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
+        Navigator.of(context).pop();
       } else {
         // Step 6. Show Error SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
@@ -336,9 +336,7 @@ class _SignupPageState extends State<SignupPage> {
                       CustomInkwell(
                           text: "Login Here",
                           onTap: () {
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginScreen()));
+                            Navigator.of(context).pop();
                           }),
                     ],
                   )

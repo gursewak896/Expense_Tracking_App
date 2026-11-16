@@ -8,10 +8,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TransactionItem extends StatelessWidget {
+  static final DateFormat _dateFormatter = DateFormat('dd MMM yyyy');
+
   final TransactionModel transaction;
 
   String formatDate(DateTime date) {
-    return DateFormat('dd MMM yyyy').format(date);
+    return _dateFormatter.format(date);
   }
 
   const TransactionItem({super.key, required this.transaction});

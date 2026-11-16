@@ -18,16 +18,24 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  static const int _recentTransactionLimit = 5;
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() async {
-      final provider = Provider.of<TransactionProvider>(context, listen: false);
-      await provider.loadLocalTransactions();
-      if (provider.transactions.isEmpty) {
-        await provider.fetchTransactions();
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final provider = context.read<TransactionProvider>();
+      _loadTransactions(provider);
     });
+  }
+
+  Future<void> _loadTransactions(TransactionProvider provider) async {
+    await provider.loadLocalTransactions();
+    if (provider.transactions.isEmpty) {
+      await provider.fetchTransactions();
+    }
   }
 
   // Navigate to add expense screen and refresh on return
@@ -49,6 +57,10 @@ class _HomeViewState extends State<HomeView> {
       appBar: CustomAppBar(user: FirebaseAuth.instance.currentUser),
       body: Consumer<TransactionProvider>(
         builder: (context, transactionProvider, _) {
+          final recentTransactions = transactionProvider.transactions
+              .take(_recentTransactionLimit)
+              .toList(growable: false);
+
           return SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 88.0),
             child: Column(
@@ -168,15 +180,13 @@ class _HomeViewState extends State<HomeView> {
                 else
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: ListView.builder(
-                      itemCount: transactionProvider.transactions.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return TransactionItem(
-                          transaction: transactionProvider.transactions[index],
-                        );
-                      },
+                    child: Column(
+                      children: recentTransactions
+                          .map(
+                            (transaction) =>
+                                TransactionItem(transaction: transaction),
+                          )
+                          .toList(),
                     ),
                   ),
               ],

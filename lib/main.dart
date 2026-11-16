@@ -8,22 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  // 1. Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
-  // 2. Initialize Firebase using the generated options
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // ✅ TEST FIREBASE CONNECTION
-  print("🔥 Firebase initialized successfully");
-  print("Project ID: ${Firebase.app().options.projectId}");
+  debugPrint("Firebase initialized successfully");
+  debugPrint("Project ID: ${Firebase.app().options.projectId}");
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

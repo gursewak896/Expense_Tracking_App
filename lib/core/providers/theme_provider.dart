@@ -17,7 +17,7 @@ class ThemeProvider extends ChangeNotifier {
       _isDarkMode = prefs.getBool(_themePrefKey) ?? false;
       notifyListeners();
     } catch (e) {
-      print('Error loading theme preference: $e');
+      debugPrint('Error loading theme preference: $e');
     }
   }
 
@@ -29,7 +29,7 @@ class ThemeProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_themePrefKey, _isDarkMode);
     } catch (e) {
-      print('Error saving theme preference: $e');
+      debugPrint('Error saving theme preference: $e');
     }
   }
 
@@ -42,7 +42,7 @@ class ThemeProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_themePrefKey, _isDarkMode);
     } catch (e) {
-      print('Error saving theme preference: $e');
+      debugPrint('Error saving theme preference: $e');
     }
   }
 }
