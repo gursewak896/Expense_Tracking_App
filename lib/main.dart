@@ -1,7 +1,9 @@
+import 'package:expense_app/core/providers/notification_provider.dart';
 import 'package:expense_app/core/providers/theme_provider.dart';
 import 'package:expense_app/core/providers/transaction_provider.dart';
 import 'package:expense_app/core/theme/app_themes.dart';
 import 'package:expense_app/firebase_options.dart';
+import 'package:expense_app/services/notification_service.dart';
 import 'package:expense_app/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationService.instance.init();
   debugPrint("Firebase initialized successfully");
   debugPrint("Project ID: ${Firebase.app().options.projectId}");
   runApp(const MyApp());
@@ -26,6 +29,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {

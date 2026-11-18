@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:expense_app/core/providers/notification_provider.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -16,7 +17,7 @@ class ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<ProfileView> {
-  bool notifications = true;
+  // bool notifications = true;
   bool darkMode = false;
   User? user;
   bool isCopied = false;
@@ -216,26 +217,44 @@ class _ProfileViewState extends State<ProfileView> {
               },
             ),
 
-            CustomListTile(
-                title: const Text("Notifications"),
-                darkMode: darkMode,
-                icon: Icons.notifications,
-                value: notifications,
-                onChanged: (val) {
-                  setState(() {
-                    notifications = val;
-                  });
-                }),
-            // CustomListTile(
-            //     title: const Text("Dark Mode"),
-            //     darkMode: darkMode,
-            //     icon: Icons.dark_mode,
-            //     value: darkMode,
-            //     onChanged: (val) {
-            //       setState(() {
-            //         darkMode = val;
-            //       });
-            //     }),
+            Consumer<NotificationProvider>(
+              builder: (context, n, _) {
+                return Column(
+                  children: [
+                    CustomListTile(
+                      title: const Text("Daily reminder"),
+                      darkMode: darkMode,
+                      icon: Icons.notifications,
+                      value: n.enabled,
+                      onChanged: (val) async {
+                        final messenger = ScaffoldMessenger.of(context);
+                        final ok = await n.setEnabled(val);
+                        if (!ok) {
+                          messenger.showSnackBar(const SnackBar(
+                            content: Text(
+                                'Notification permission denied. Enable it in system settings.'),
+                          ));
+                        }
+                      },
+                    ),
+                    if (n.enabled)
+                      ListTile(
+                        leading: const Icon(Icons.access_time,
+                            color: AppColors.primary),
+                        title: const Text('Reminder time'),
+                        trailing: Text(n.time.format(context)),
+                        onTap: () async {
+                          final picked = await showTimePicker(
+                            context: context,
+                            initialTime: n.time,
+                          );
+                          if (picked != null) await n.setTime(picked);
+                        },
+                      ),
+                  ],
+                );
+              },
+            ),
             const SizedBox(height: 14),
 
             // ================= LOGOUT =================
@@ -293,8 +312,11 @@ class _ProfileViewState extends State<ProfileView> {
                                     context.read<ThemeProvider>();
                                 final transactionProvider =
                                     context.read<TransactionProvider>();
+                                final notificationProvider =
+                                    context.read<NotificationProvider>();
 
                                 await themeProvider.setDarkMode(false);
+                                await notificationProvider.setEnabled(false);
                                 await transactionProvider
                                     .clearLocalTransactions();
 

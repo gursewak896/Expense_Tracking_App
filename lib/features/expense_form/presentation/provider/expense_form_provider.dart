@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:async';
+import 'package:expense_app/core/providers/notification_provider.dart';
 
 class ExpenseFormProvider extends ChangeNotifier {
   TransactionModel? editingTransaction;
@@ -108,6 +110,8 @@ class ExpenseFormProvider extends ChangeNotifier {
 
     if (context.mounted) {
       if (saved) {
+        unawaited(Provider.of<NotificationProvider>(context, listen: false)
+            .markLoggedToday());
         Navigator.pop(context);
       } else {
         final error =
