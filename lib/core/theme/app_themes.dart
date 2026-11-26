@@ -1,27 +1,29 @@
 import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppThemes {
   // Light Theme
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     useMaterial3: true,
+    fontFamily: GoogleFonts.poppins().fontFamily,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.primary,
       brightness: Brightness.light,
     ).copyWith(primary: AppColors.primary, onPrimary: Colors.white),
     scaffoldBackgroundColor: const Color(0xFFF5F5FA),
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.black87),
-      titleTextStyle: TextStyle(
+      iconTheme: const IconThemeData(color: Colors.black87),
+      titleTextStyle: GoogleFonts.poppins(
         color: Colors.black87,
         fontSize: 18,
         fontWeight: FontWeight.w600,
       ),
     ),
-    textTheme: const TextTheme(
+    textTheme: GoogleFonts.poppinsTextTheme(const TextTheme(
       bodyLarge: TextStyle(color: Colors.black87),
       bodyMedium: TextStyle(color: Colors.black87),
       bodySmall: TextStyle(color: Colors.black87),
@@ -29,12 +31,12 @@ class AppThemes {
       titleMedium: TextStyle(color: Colors.black87),
       titleSmall: TextStyle(color: Colors.black87),
       labelLarge: TextStyle(color: Colors.black87),
-    ),
+    )),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: const Color(0xFFE9EEFF),
-      hintStyle: const TextStyle(color: Colors.black38),
-      labelStyle: const TextStyle(color: Colors.black87),
+      hintStyle: GoogleFonts.poppins(color: Colors.black38),
+      labelStyle: GoogleFonts.poppins(color: Colors.black87),
       prefixIconColor: Colors.black38,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -56,7 +58,7 @@ class AppThemes {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
       ),
     ),
   );
@@ -65,22 +67,23 @@ class AppThemes {
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     useMaterial3: true,
+    fontFamily: GoogleFonts.poppins().fontFamily,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.primary,
       brightness: Brightness.dark,
     ).copyWith(primary: AppColors.primary, onPrimary: Colors.white),
     scaffoldBackgroundColor: const Color(0xFF121212),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF1E1E1E),
+    appBarTheme: AppBarTheme(
+      backgroundColor: const Color(0xFF1E1E1E),
       elevation: 0,
-      iconTheme: IconThemeData(color: Colors.white70),
-      titleTextStyle: TextStyle(
+      iconTheme: const IconThemeData(color: Colors.white70),
+      titleTextStyle: GoogleFonts.poppins(
         color: Colors.white,
         fontSize: 18,
         fontWeight: FontWeight.w600,
       ),
     ),
-    textTheme: const TextTheme(
+    textTheme: GoogleFonts.poppinsTextTheme(const TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.white70),
       bodySmall: TextStyle(color: Colors.white60),
@@ -88,12 +91,12 @@ class AppThemes {
       titleMedium: TextStyle(color: Colors.white),
       titleSmall: TextStyle(color: Colors.white70),
       labelLarge: TextStyle(color: Colors.white),
-    ),
+    )),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: const Color(0xFF2C2C2C),
-      hintStyle: const TextStyle(color: Colors.white38),
-      labelStyle: const TextStyle(color: Colors.white),
+      hintStyle: GoogleFonts.poppins(color: Colors.white38),
+      labelStyle: GoogleFonts.poppins(color: Colors.white),
       prefixIconColor: Colors.white38,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -115,7 +118,7 @@ class AppThemes {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
       ),
     ),
     cardColor: const Color(0xFF2C2C2C),
