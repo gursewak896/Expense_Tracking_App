@@ -1,10 +1,10 @@
-import 'package:expense_app/core/providers/notification_provider.dart';
+import 'package:expense_app/features/notifications/presentation/providers/notification_provider.dart';
 import 'package:expense_app/core/providers/theme_provider.dart';
-import 'package:expense_app/core/providers/transaction_provider.dart';
+import 'package:expense_app/features/transactions/presentation/providers/transaction_provider.dart';
 import 'package:expense_app/core/theme/app_themes.dart';
+import 'package:expense_app/app_router.dart';
 import 'package:expense_app/firebase_options.dart';
-import 'package:expense_app/services/notification_service.dart';
-import 'package:expense_app/wrapper.dart';
+import 'package:expense_app/features/notifications/data/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,14 +33,14 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
-          return MaterialApp(
+          return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Expense Tracker',
             theme: AppThemes.lightTheme,
             darkTheme: AppThemes.darkTheme,
             themeMode:
                 themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-            home: const AuthWrapper(),
+            routerConfig: appRouter,
           );
         },
       ),

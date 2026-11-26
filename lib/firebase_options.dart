@@ -64,7 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '313908942266',
     projectId: 'expensetrackingapp-4e17b',
     storageBucket: 'expensetrackingapp-4e17b.firebasestorage.app',
-    iosClientId: '313908942266-oodbs9e0snohc8607tvbsv8kkv2roj6n.apps.googleusercontent.com',
+    iosClientId:
+        '313908942266-oodbs9e0snohc8607tvbsv8kkv2roj6n.apps.googleusercontent.com',
     iosBundleId: 'com.example.expenseApp',
   );
 
@@ -74,7 +75,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '313908942266',
     projectId: 'expensetrackingapp-4e17b',
     storageBucket: 'expensetrackingapp-4e17b.firebasestorage.app',
-    iosClientId: '313908942266-oodbs9e0snohc8607tvbsv8kkv2roj6n.apps.googleusercontent.com',
+    iosClientId:
+        '313908942266-oodbs9e0snohc8607tvbsv8kkv2roj6n.apps.googleusercontent.com',
     iosBundleId: 'com.example.expenseApp',
   );
 
@@ -87,5 +89,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'expensetrackingapp-4e17b.firebasestorage.app',
     measurementId: 'G-F2207R262R',
   );
-
 }

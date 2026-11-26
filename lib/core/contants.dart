@@ -1,5 +1,5 @@
 // constants.dart
-import 'package:expense_app/features/home_expense/data/models/category_items.dart';
+import 'package:expense_app/features/transactions/data/models/category_items.dart';
 import 'package:expense_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

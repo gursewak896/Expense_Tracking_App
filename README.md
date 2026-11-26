@@ -19,6 +19,7 @@ A cross-platform personal finance app built with **Flutter** and **Firebase**. T
 - **Forgot password** flow
 - **Change password** with re-authentication of the current password
 - Automatic routing between login and home based on auth state
+- Centralized routing and auth redirects with **go_router**
 - Per-user data isolation: every user only sees their own transactions
 
 ### Transactions
@@ -61,34 +62,56 @@ A cross-platform personal finance app built with **Flutter** and **Firebase**. T
 | Notifications | **flutter_local_notifications**, **timezone**, **flutter_timezone** |
 | Networking | **http** (Firebase Identity Toolkit REST API for password verification) |
 | Utilities | **intl** (formatting), **uuid** (IDs), **equatable**, **google_fonts** |
+| Routing | **go_router** (named routes and Firebase auth redirects) |
 | Testing | **flutter_test** |
 
 ## Architecture
 
-The project uses a feature-first structure with a clear split between UI, state and services.
+The project uses a feature-first structure. Feature-specific services, state and UI are grouped together.
 
 ```
 lib/
-├── main.dart                  # Firebase init, providers, theming
-├── wrapper.dart               # AuthWrapper: login state decides the screen
-├── services/
-│   ├── auth_service.dart              # Firebase Auth operations
-│   ├── transaction_api_service.dart   # Firestore CRUD + live stream
-│   └── notification_service.dart      # Scheduled local notifications
+├── main.dart
+├── app_router.dart
+├── firebase_options.dart
 ├── core/
-│   ├── providers/             # TransactionProvider, ThemeProvider, NotificationProvider
-│   ├── theme/                 # Colors and light/dark themes
-│   ├── utils/                 # Currency formatter
-│   └── widgets/               # Shared UI components
+│   ├── contants.dart
+│   ├── providers/theme_provider.dart
+│   ├── theme/
+│   └── utils/currency_formatter.dart
 └── features/
-    ├── login/                 # Login, signup, forgot password (Cubit)
-    ├── home_expense/          # Home, stats, profile, change password
-    └── expense_form/          # Add / edit expense form and category picker
+    ├── analytics/presentation/
+    │   ├── screens/stats_view.dart
+    │   ├── statistics/transaction_statistics.dart
+    │   └── widgets/stats_charts.dart
+    ├── auth/
+    │   ├── data/auth_service.dart
+    │   ├── models/auth_result.dart
+    │   └── presentation/
+    │       ├── bloc/
+    │       ├── screens/
+    │       └── widgets/
+    ├── dashboard/presentation/
+    │   ├── screens/
+    │   └── widgets/
+    ├── notifications/
+    │   ├── data/notification_service.dart
+    │   └── presentation/providers/notification_provider.dart
+    └── transactions/
+        ├── data/
+        │   ├── models/
+        │   └── transaction_api_service.dart
+        └── presentation/
+            ├── providers/
+            ├── screens/
+            └── widgets/
+test/
+└── features/analytics/presentation/statistics/transaction_statistics_test.dart
 ```
 
 ### How it works
 1. `main()` initializes Firebase and the notification service, then registers the providers.
-2. `AuthWrapper` listens to `FirebaseAuth.authStateChanges()` and shows either the login flow or the home screen.
+2. `app_router.dart` listens to `FirebaseAuth.authStateChanges()` and redirects users between public auth routes and protected app routes.
 3. `LoginCubit` handles login and emits Loading, Success or Failure states.
 4. On home load, `TransactionProvider` reads the local cache, then subscribes to the user's Firestore collection (`users/{uid}/transactions`) and refreshes the cache on every update.
 5. Adding, editing or deleting goes through `TransactionApiService`, and the Firestore stream pushes the result back to the UI.
